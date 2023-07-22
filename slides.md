@@ -7,26 +7,11 @@ fonts:
 lineNumbers: false
 drawings:
   persist: true
-title: Browser-back experience and Next.js
+title: Next.js(App Router) Router Cache
 remoteAssets: false
 ---
 
-# Browser-back experience <br>and Next.js
-
-ブラウザバック体験で見るNext.js
-
----
-
-# About
-
-- name: Akifumi Sato
-  - twitter: akfm_sato
-  - github: AkifumiSato
-  - zenn.dev: akfm
-  - Front-end/Backend Engineer
-- Next.js
-  - 仕事でもNext.jsのプロジェクトを担当
-  - 自身のサイトなどもNext.js
+# App Router's Router Cache
 
 ---
 layout: message
@@ -34,166 +19,66 @@ layout: message
 
 今日話したいこと:
 
-Next.jsとブラウザバックの話
+Router Cacheは複雑
 
 ---
 
-<Title>SPAとブラウザバック</Title>
-
----
-layout: sub-section
-breadcrumb: SPAとブラウザバック
----
-
-# ブラウザバック体験の重要性
-
-ブラウザバックはユーザーにとって、最も重要なWebブラウジング体験の1つ。
-
-- 元ネタ: [リッチなWebアプリケーションのための7つの原則](https://yosuke-furukawa.hatenablog.com/entry/2014/11/14/141415)
-  - 原著: [7 Principles of Rich Web Applications](https://rauchg.com/2014/7-principles-of-rich-web-applications)
-  - rauch氏による過去のブログ
-- **Don't break history, enhance it**
-  - 履歴は壊すべきじゃない
-  - 「ユーザーは"戻る"事によってデータが変更されるような事は期待していない。」
-  - スクロール位置や状態はhistoryに関連づけられ、復元されることが望ましい
+<Title>Next.js(App Router)</Title>
 
 ---
 layout: sub-section
-breadcrumb: SPAとブラウザバック
+breadcrumb: Next.js(App Router)
 ---
 
-# ブラウザバック体験の重要性
+# App Routerとは
 
-しかし、こういった原則を重視してるサイトは少ない...
+https://nextjs.org/docs/app
 
-- 多くのサイトではスクロール位置や状態が失われる
-- ユーザーからの不平不満も存在する
-  - https://rentwi.hyuki.net/?1576010373357965312
+> Appルーターは、Reactの最新機能を使用してアプリケーションを構築するための新しいパラダイムです。すでにNext.jsに慣れ親しんでいる方であれば、App Routerが既存のファイルシステムベースのルーターであるPages Routerの自然な進化形であることがわかるでしょう。
 
----
-
-<Title>Next.jsとブラウザバック体験</Title>
-
----
-layout: sub-section
-breadcrumb: Next.jsとブラウザバック体験
----
-
-# ブラウザバック体験における重要な機能
-
-前述のブラウザバック体験における重要な2つの機能ついて、Next.jsがどうなってるか見てみる
-
-- **スクロール位置の復元**
-- **状態の復元**
+- Next.jsの新しいRouter
+  - 従来のRouterは**Pages Router**と呼称
+  - フレームワークとしてはほとんど別物レベル
+- Reactコアチームと協業して開発
+  - Server 1st
+  - より積極的なキャッシュ戦略
+  - Nesting Layout
 
 ---
 layout: sub-section
-breadcrumb: Next.jsとブラウザバック体験
+breadcrumb: Next.js(App Router)
 ---
 
-# Next.jsのスクロール復元
+# App Routerのキャッシュ
 
-experimental(実験的機能)で提供されてるappディレクトリはおそらく未対応？
+https://github.com/vercel/next.js/blob/05b2730f55371a7fb16b9afff6d01ad7010a897d/docs/02-app/01-building-your-application/04-caching/index.mdx
 
-```ts
-// next.config.js
-const nextConfig = {
-  // ...
-  experimental: {
-    scrollRestoration: true,
-  },
-}
-
-module.exports = nextConfig
-```
-
----
-layout: sub-section
-breadcrumb: Next.jsとブラウザバック体験
----
-
-# Next.jsのスクロール復元
-
-余談: リロード時にNext.js内部の履歴がリセットされるバグを修正した
-
-https://github.com/vercel/next.js/pull/36861
-
-<div class="flex justify-center">
-  <img src="/assets/nextjs-pr.png" class="h-60">
-</div>
-
----
-layout: sub-section
-breadcrumb: Next.jsとブラウザバック体験
----
-
-# Next.jsのスクロール復元
-
-詳細な解説はzennにまとめてあるので、そちらをご参照ください。
-
-https://zenn.dev/akfm/articles/next-js-scroll-restore
-
-<div class="flex justify-center">
-  <img src="/assets/zenn-scroll.png" class="h-60">
-</div>
-
----
-layout: sub-section
-breadcrumb: Next.jsとブラウザバック体験
----
-
-# Next.jsの状態復元
-
-残念ながら、公式に履歴に紐づけて状態を保存する手段はまだない...
-
-<v-click>
-
-**なので、復元するライブラリを作った！（作るのを手伝った）**
-
-[recoil-sync-next](https://github.com/recruit-tech/recoil-sync-next)
-
-```tsx{|4-7}
-export const counter = atom<number>({
-  key: 'counterState',
-  default: 0,
-  effects: [
-    syncEffect({
-      storeKey: 'ui-state', // 任意のkeyに紐づけて保存できる
-      refine: number(),
-    }
-  )],
-})
-```
-
-</v-click>
-
----
-layout: sub-section
-breadcrumb: Next.jsとブラウザバック体験
----
-
-# Next.jsの状態復元
-
-これも、詳細な解説はzennにまとめてあるのでそちらをご参照ください。
-
-https://zenn.dev/akfm/articles/recoi-sync-next
-
-<div class="flex justify-center">
-  <img src="/assets/zenn-history.png" class="h-60">
-</div>
+4種類のキャッシュが存在する
 
 ---
 
-<Title>今後Next.jsに求めたいこと</Title>
+## Overview
+
+| Mechanism                             | What is cached?                | Where is it cached? |  Duration                        |
+| ------------------------------------- | ------------------------------ | ------------------- |  ------------------------------- |
+| React Cache           | Return values of functions     | Server              |  Per-request lifecycle           |
+| Data Cache             | Return values of data requests | Server              |  Persistent (can be revalidated) |
+| Full Routeroute-cache) | Rendered HTML and RSC payload  | Server              |  Persistent (can be revalidated) |
+| Router Cache         | Route Segments (RSC Payload)   | Client              |  User session or time-based.     |
 
 ---
-layout: sub-section
-breadcrumb: 今後Next.jsに求めたいこと
+layout: message
 ---
 
-# ブラウザバック体験から、Next.jsにもとめたいこと
+今回は特に、Router Cacheがどう実現されているのかみてみましょう
 
-まず`scrollRestoration`があることに感謝
+---
 
-- Beta機能の`app`ディレクトリでも、`scrollRestoration`対応してくれると嬉しい
-- 公式に履歴に紐づく状態管理（`useNextState`...?）ができるようになると嬉しい
+<Title>App Router Navigation</Title>
+
+---
+
+memo: zennの内容をかいつまんで話してく
+
+- Router Cacheを理解するには遷移とprefetchを理解する必要がある
+- App RouterはLinkタグ内で積極的にprefetchを行う
