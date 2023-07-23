@@ -19,7 +19,7 @@
 
 .card {
   /*color: #fff;*/
-  background: #f1f3f5;
+  background: #252525;
   /*background: linear-gradient(to right, rgb(74, 222, 128), rgb(6, 182, 212));*/
   border-radius: 10px;
   width: 90%;
@@ -32,7 +32,6 @@
 
 .message {
   font-size: 50px;
-  font-weight: bold;
   line-height: 2;
 }
 </style>

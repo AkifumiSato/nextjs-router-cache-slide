@@ -1,17 +1,19 @@
 ---
 theme: default
 highlighter: shiki
-colorSchema: light
+colorSchema: dark
 fonts:
   mono: Fira Mono
 lineNumbers: false
 drawings:
   persist: true
-title: Next.js(App Router) Router Cache
+title: Next.js App Router's Router Cache
 remoteAssets: false
 ---
 
-# App Router's Router Cache
+# Next.js App Router's<br> Router Cache
+
+App Routerのクライアントサイドキャッシュの複雑さ
 
 ---
 layout: message
@@ -40,7 +42,7 @@ https://nextjs.org/docs/app
   - 従来のRouterは**Pages Router**と呼称
   - フレームワークとしてはほとんど別物レベル
 - Reactコアチームと協業して開発
-  - Server 1st
+  - Server first
   - より積極的なキャッシュ戦略
   - Nesting Layout
 
@@ -51,9 +53,9 @@ breadcrumb: Next.js(App Router)
 
 # App Routerのキャッシュ
 
-https://github.com/vercel/next.js/blob/05b2730f55371a7fb16b9afff6d01ad7010a897d/docs/02-app/01-building-your-application/04-caching/index.mdx
+App Routerにはいくつかのキャッシュ層が存在する
 
-4種類のキャッシュが存在する
+https://github.com/vercel/next.js/blob/05b2730f55371a7fb16b9afff6d01ad7010a897d/docs/02-app/01-building-your-application/04-caching/index.mdx
 
 ---
 
@@ -63,22 +65,39 @@ https://github.com/vercel/next.js/blob/05b2730f55371a7fb16b9afff6d01ad7010a897d/
 | ------------------------------------- | ------------------------------ | ------------------- |  ------------------------------- |
 | React Cache           | Return values of functions     | Server              |  Per-request lifecycle           |
 | Data Cache             | Return values of data requests | Server              |  Persistent (can be revalidated) |
-| Full Routeroute-cache) | Rendered HTML and RSC payload  | Server              |  Persistent (can be revalidated) |
+| Full Route Cache | Rendered HTML and RSC payload  | Server              |  Persistent (can be revalidated) |
 | Router Cache         | Route Segments (RSC Payload)   | Client              |  User session or time-based.     |
 
 ---
-layout: message
+layout: sub-section
+breadcrumb: Next.js(App Router)
 ---
 
-今回は特に、Router Cacheがどう実現されているのかみてみましょう
+# なぜRouter Cacheに着目したのか
+
+App Routerの仕組みを研究してみようと思ったら、Router Cacheが複雑なことに気づいた
+
+- [Next.js App Router 遷移の仕組みと実装
+](https://zenn.dev/akfm/articles/next-app-router-navigation)
+  - 遷移の仕組みを調べてた
+  - ここでRouter Cacheの複雑さに気づくが複雑すぎて理解を諦める
+- [Next.js App Router 知られざるClient-side Cacheの仕様
+](https://zenn.dev/akfm/articles/next-app-router-client-cache)
+  - 頑張って調べてまとめたた
 
 ---
 
 <Title>App Router Navigation</Title>
 
 ---
+layout: sub-section
+breadcrumb: App Router Navigation
+---
 
-memo: zennの内容をかいつまんで話してく
+# App Routerの遷移を理解する
 
-- Router Cacheを理解するには遷移とprefetchを理解する必要がある
-- App RouterはLinkタグ内で積極的にprefetchを行う
+Router Cacheの話題に入る前に、App Routerの遷移を理解する必要がある
+
+- App Routerでは、`Link`コンポーネントが積極的にprefetchを行う
+  - 明示的にoffにしないと基本的にprefetchを行う(`prefetch={false}`)
+  - dynamic renderingと呼ばれるレンダリング
