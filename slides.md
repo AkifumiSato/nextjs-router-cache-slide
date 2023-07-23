@@ -98,6 +98,22 @@ breadcrumb: App Router Navigation
 
 Router Cacheの話題に入る前に、App Routerの遷移を理解する必要がある
 
-- App Routerでは、`Link`コンポーネントが積極的にprefetchを行う
-  - 明示的にoffにしないと基本的にprefetchを行う(`prefetch={false}`)
-  - dynamic renderingと呼ばれるレンダリング
+- App Routerでは、積極的にprefetchを行い、結果はcacheとして格納される(**Router Cache**)
+- Router Cacheという名称ではあるが、内部的には遷移時に必ず必要となる
+- 必要なcacheが見つからない場合、即座にfetchを行いRouter Cacheを更新する
+
+---
+layout: sub-section
+breadcrumb: App Router Navigation
+---
+
+<div class="flex justify-center">
+  <img src="/assets/prefetch_demo.png" class="h-100">
+</div>
+
+---
+
+todo
+
+- [ ] demoで色々確認
+
