@@ -223,10 +223,3 @@ breadcrumb: App RouterとRouter Cacheまとめ
 - 悩んだら以下の記事を読むと参考になるかも
 
 https://zenn.dev/akfm/
-
----
-
-todo
-
-- [ ] demoで色々確認
-
