@@ -144,8 +144,7 @@ Router Cacheのrevalidateは`prefetch={}`・取得時間・利用時間によっ
 | prefetch/fetchから**30秒以内**                  | `fresh`    | `fresh` | `fresh` |
 | lastUsedから**30秒以内**     | `reusable` | `reusable` | `reusable` |
 | prefetch/fetchから**30秒~5分**                  | `stale`    | `reusable` | `expired` |
-| prefetch/fetchから**5分~30分**        | `expired`    | `reusable` | `expired` |
-| prefetch/fetchから**30分以降**                  | `expired`    | `expired` | `expired` |
+| prefetch/fetchから**5分以降**                  | `expired`    | `expired` | `expired` |
 
 ---
 layout: sub-section
