@@ -137,7 +137,7 @@ breadcrumb: Router Cacheの複雑な挙動
 
 # cacheのexpireが複雑
 
-Router Cacheのrevalidateは`prefetch={}`・取得時間・利用時間によって複雑に分岐する
+Router Cacheのexpireは`prefetch={}`・取得時間・利用時間によって複雑に分岐する
 
 | 時間判定 / cacheの種類               | `auto` | `full` | `temporary` |
 | ----------------------- | ------- | ---- | ---- |
@@ -162,14 +162,15 @@ layout: sub-section
 breadcrumb: Router Cacheの複雑な挙動
 ---
 
-# cacheのrevalidateが複雑
+# cacheのpurgeが複雑
 
 cacheを無効化する手段が複雑
 
 - `router.refresh()`で全てのcacheを無効化することは可能
-- 安定版の機能では、個別のcacheをrevalidateする手段はない
-- 将来的にはalpha機能のServer Actions＋`revalidatePath`/`revalidateTag`/`cookies.set`/`cookies.delete`で個別のcacheをrevalidateできるようになりそう
-  - 現状はこれらを利用すると全てのcacheが無効化される
+- 安定版の機能では、個別のcacheをpurgeする手段はない
+- 将来的にはalpha機能のServer Actions＋`revalidatePath`/`revalidateTag`で個別のcacheをpurgeできるようになりそう
+  - 現状はこれらを利用すると全てのcacheがpurgeされる
+  - ちなみに`cookies.set`/`cookies.delete`でも全てのcacheはpurgeされる
 
 ---
 layout: sub-section
@@ -183,9 +184,9 @@ Router CacheとIntercepting routesの組み合わせが設計からして相性�
 https://github.com/vercel/next.js/issues/52748
 
 - Intercepting routesは`Next-Url`ヘッダー（GETパラメータなどを省いたもの）に基づいて判定される
-- 現状prefetchはcacheがないか無効の時にのみ行われる
-- 積極的すぎたprefetchは減らす方向にある模様（？）
-- しかしこれを安易に治すと、遷移ごとにprefetchしないといけなくてこれまでの何倍ものprefetchが行われてしまう
+- Router Cacheは現状`Next-Url`の考慮がなされてないため、Intercepting routes時にも意図せずcache hitしてしまう
+- 安易に治すと、遷移ごとにprefetchしないといけなくてこれまでの何倍ものprefetchが行われてしまう
+  - しかし現状、積極的すぎたprefetchは減らす方向にある模様（？）
 
 ---
 
@@ -204,6 +205,7 @@ breadcrumb: App Routerのいいところ
   - ファイルサイズやrenderingコストが低減される
 - Nested Layout
   - URL仕様次第ではあるが、うまく使えば重複コードを減らせる
+  - 遷移時に失われてたstateも保持できる
 - Server Actions
   - RPC的な体験をライブラリなしで得られる
 
