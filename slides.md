@@ -139,12 +139,23 @@ breadcrumb: Router Cacheの複雑な挙動
 
 Router Cacheのrevalidateは`prefetch={}`・取得時間・利用時間によって複雑に分岐する
 
-| 時間判定                | `auto` | `full` | `temporary` |
+| 時間判定 / cacheの種類               | `auto` | `full` | `temporary` |
 | ----------------------- | ------- | ---- | ---- |
 | prefetch/fetchから**30秒以内**                  | `fresh`    | `fresh` | `fresh` |
 | lastUsedから**30秒以内**     | `reusable` | `reusable` | `reusable` |
 | prefetch/fetchから**30秒~5分**                  | `stale`    | `reusable` | `expired` |
 | prefetch/fetchから**5分以降**                  | `expired`    | `expired` | `expired` |
+
+---
+layout: sub-section
+breadcrumb: Router Cacheの複雑な挙動
+---
+
+# Cacheの状態ごとの挙動
+
+- `fresh`, `reusable`: prefetch/fetchを再発行せず、cacheを再利用する
+- `stale`: Dynamic Rendering部分だけ遷移時に再fetchを行う
+- `expired`: prefetchh/fetchを再発行する
 
 ---
 layout: sub-section
@@ -157,7 +168,8 @@ cacheを無効化する手段が複雑
 
 - `router.refresh()`で全てのcacheを無効化することは可能
 - 安定版の機能では、個別のcacheをrevalidateする手段はない
-- alpha機能のServer Actions＋`revalidatePath`/`revalidateTag`/`cookies.set`/`cookies.delete`で個別のcacheをrevalidateできる
+- 将来的にはalpha機能のServer Actions＋`revalidatePath`/`revalidateTag`/`cookies.set`/`cookies.delete`で個別のcacheをrevalidateできるようになりそう
+  - 現状はこれらを利用すると全てのcacheが無効化される
 
 ---
 layout: sub-section
@@ -170,10 +182,10 @@ Router CacheとIntercepting routesの組み合わせが設計からして相性�
 
 https://github.com/vercel/next.js/issues/52748
 
-- Intercepting routesは`Next-Url`に基づいて判定される
+- Intercepting routesは`Next-Url`ヘッダー（GETパラメータなどを省いたもの）に基づいて判定される
 - 現状prefetchはcacheがないか無効の時にのみ行われる
-- 積極的すぎたprefetchに規制が入って同時prefetch数などが5まで減らされてる
-- 安易に治すと、遷移ごとにprefetchしないといけなくてこれまでの何倍ものprefetchが行われてしまう
+- 積極的すぎたprefetchは減らす方向にある模様（？）
+- しかしこれを安易に治すと、遷移ごとにprefetchしないといけなくてこれまでの何倍ものprefetchが行われてしまう
 
 ---
 
