@@ -67,20 +67,23 @@ breadcrumb: Next.js(App Router)
 
 # App Routerのキャッシュ
 
-App Routerにはいくつかのキャッシュ層が存在する
+App Routerには[いくつかのキャッシュ層](https://nextjs.org/docs/app/building-your-application/caching)が存在する
 
-https://github.com/vercel/next.js/blob/05b2730f55371a7fb16b9afff6d01ad7010a897d/docs/02-app/01-building-your-application/04-caching/index.mdx
+
+<div class="flex justify-center">
+  <img src="/assets/cache-layer.png" class="h-80 w-100">
+</div>
 
 ---
 
 ## Overview
 
-| Mechanism                             | What is cached?                | Where is it cached? |  Duration                        |
-| ------------------------------------- | ------------------------------ | ------------------- |  ------------------------------- |
-| React Cache           | Return values of functions     | Server              |  Per-request lifecycle           |
-| Data Cache             | Return values of data requests | Server              |  Persistent (can be revalidated) |
-| Full Route Cache | Rendered HTML and RSC payload  | Server              |  Persistent (can be revalidated) |
-| Router Cache         | Route Segments (RSC Payload)   | Client              |  User session or time-based.     |
+| Mechanism               | What                       | Where  | Purpose                                         | Duration                        |
+|-------------------------|----------------------------|--------|-------------------------------------------------|---------------------------------|
+| Request Memoization     | Return values of functions | Server | Re-use data in a React Component tree           | Per-request lifecycle           |
+| Data Cache](#data-cache | Data                       | Server | Store data across user requests and deployments | Persistent (can be revalidated) |
+| Full Route Cache        | HTML and RSC payload       | Server | Reduce rendering cost and improve performance   | Persistent (can be revalidated) |
+| Router Cache            | RSC Payload                | Client | Reduce server requests on navigation            | User session or time-based      |
 
 ---
 layout: sub-section
