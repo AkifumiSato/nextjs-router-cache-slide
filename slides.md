@@ -115,8 +115,9 @@ breadcrumb: App Router Navigation
 
 Router Cacheの話題に入る前に、App Routerの遷移を理解する必要がある
 
-- App Routerでは、積極的にprefetchを行い、結果はcacheとして格納される(**Router Cache**)
-- Router Cacheという名称ではあるが、内部的には遷移時に必ず必要となる
+- App Routerでは、積極的にprefetchを行い、結果はcacheとして格納される
+  - 内部的には`prefetchCache`と呼ばれているが、公には**Router Cache**と呼ばれている
+  - Router Cacheは遷移時に必ず必要となる
 - 必要なcacheが見つからない場合、即座にfetchを行いRouter Cacheを更新する
 
 ---
@@ -152,16 +153,29 @@ layout: sub-section
 breadcrumb: Router Cacheの複雑な挙動
 ---
 
+# cacheの内部的な分類
+
+| cacheの種類    | `Link`                 | `router`                                             |
+|-------------|------------------------|------------------------------------------------------|
+| `auto`      | `prefetch={undefined}` | `router.prefetch(path, { kind: PrefetchKind.AUTO })` | 
+| `full`      | `prefetch={true}`      | `router.prefetch(path)`                              | 
+| `temporary` | `prefetch={false}`     | -                                                    |
+
+---
+layout: sub-section
+breadcrumb: Router Cacheの複雑な挙動
+---
+
 # cacheのexpireが複雑
 
-Router Cacheのexpireは`prefetch={}`・取得時間・利用時間によって複雑に分岐する
+Router Cacheのexpireは`prefetch`props・取得時間・利用時間によって分岐する
 
-| 時間判定 / cacheの種類               | `auto` | `full` | `temporary` |
-| ----------------------- | ------- | ---- | ---- |
-| prefetch/fetchから**30秒以内**                  | `fresh`    | `fresh` | `fresh` |
-| lastUsedから**30秒以内**     | `reusable` | `reusable` | `reusable` |
-| prefetch/fetchから**30秒~5分**                  | `stale`    | `reusable` | `expired` |
-| prefetch/fetchから**5分以降**                  | `expired`    | `expired` | `expired` |
+| 時間判定 / cacheの種類            | `auto`     | `full`     | `temporary` |
+|----------------------------|------------|------------|-------------|
+| prefetch/fetchから**30秒以内**  | `fresh`    | `fresh`    | `fresh`     |
+| lastUsedから**30秒以内**        | `reusable` | `reusable` | `reusable`  |
+| prefetch/fetchから**30秒~5分** | `stale`    | `reusable` | `expired`   |
+| prefetch/fetchから**5分以降**   | `expired`  | `expired`  | `expired`   |
 
 ---
 layout: sub-section
