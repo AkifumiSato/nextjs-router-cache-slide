@@ -186,7 +186,7 @@ breadcrumb: Router Cacheの複雑な挙動
 
 - `fresh`, `reusable`: prefetch/fetchを再発行せず、cacheを再利用する
 - `stale`: Dynamic Rendering部分だけ遷移時に再fetchを行う
-- `expired`: prefetchh/fetchを再発行する
+- `expired`: prefetch/fetchを再発行する
 
 ---
 layout: sub-section
@@ -196,6 +196,8 @@ breadcrumb: Router Cacheの複雑な挙動
 # cacheのpurgeが複雑
 
 cacheを無効化する手段が複雑
+
+https://github.com/vercel/next.js/discussions/54075
 
 - `router.refresh()`で全てのcacheを無効化することは可能
 - 安定版の機能では、個別のcacheをpurgeする手段はない
@@ -208,16 +210,16 @@ layout: sub-section
 breadcrumb: Router Cacheの複雑な挙動
 ---
 
-# cacheがあるときにIntercepting routesがバグってる
+# cacheがあるとIntercepting routesが機能しない
 
 Router CacheとIntercepting routesの組み合わせが設計からして相性が悪い
 
 https://github.com/vercel/next.js/issues/52748
 
 - Intercepting routesは`Next-Url`ヘッダー（GETパラメータなどを省いたもの）に基づいて判定される
-- Router Cacheは現状`Next-Url`の考慮がなされてないため、Intercepting routes時にも意図せずcache hitしてしまう
-- 安易に治すと、遷移ごとにprefetchしないといけなくてこれまでの何倍ものprefetchが行われてしまう
-  - しかし現状、積極的すぎたprefetchは減らす方向にある模様（？）
+- Router Cacheは現状URLパスをkeyにしているため`Next-Url`が考慮されておらず、Intercepting routes時もcache hitしてしまう
+- `Next-Url`をキーに含めるようにすると、これまでの何倍ものprefetchが行われてしまうので難しい問題
+- （それはそうと反応がないのは困る）
 
 ---
 
@@ -248,8 +250,8 @@ breadcrumb: App Routerのいいところ
 # Next.jsはApp Routerに全力
 
 - Pages Routerは若干メンテナンスモード気味
-- 新機能はApp Routerばかり
-- Reactコアチームも連携してApp Routerの開発は進んでるため、頓挫する可能性はかなり低そう
+- 開発チームはApp Routerに注力し続けてる
+- Reactチームも連携してる
 
 ---
 
@@ -262,8 +264,14 @@ breadcrumb: App RouterとRouter Cacheまとめ
 
 # App RouterとRouter Cache
 
-- App Routerは今後の主軸なのは間違いない
+- 現時点ではNext.jsのメインストリームはApp Router
 - Router Cacheは複雑かつまだ不安定気味
-- 悩んだら以下の記事を読むと参考になるかも
+- 悩んだらいろいろ記事書いてるので参考になるかも？
 
 https://zenn.dev/akfm/
+
+---
+layout: message
+---
+
+Thanks
