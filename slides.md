@@ -83,7 +83,7 @@ App Routerの仕組みを研究してみようと思ったら、Router Cacheが�
   - ここでRouter Cacheの複雑さに気づくが複雑すぎて理解を諦める
 - [Next.js App Router 知られざるClient-side Cacheの仕様
 ](https://zenn.dev/akfm/articles/next-app-router-client-cache)
-  - 頑張って調べてまとめたた
+  - 頑張って調べてまとめた
 
 ---
 
@@ -99,7 +99,7 @@ breadcrumb: App Router Navigation
 Router Cacheの話題に入る前に、App Routerの遷移を理解する必要がある
 
 - App Routerでは、積極的にprefetchを行い、結果はcacheとして格納される(**Router Cache**)
-- Router Cacheという名称ではあるが、内部的には遷移時に必ず必要となる
+- `Cache`と呼ばれてはいるが、内部的には遷移時に必ず必要となる
 - 必要なcacheが見つからない場合、即座にfetchを行いRouter Cacheを更新する
 
 ---
@@ -164,13 +164,13 @@ breadcrumb: Router Cacheの複雑な挙動
 
 # cacheのpurgeが複雑
 
-cacheを無効化する手段が複雑
+cacheをpurgeする手段が複雑
 
-- `router.refresh()`で全てのcacheを無効化することは可能
-- 安定版の機能では、個別のcacheをpurgeする手段はない
-- 将来的にはalpha機能のServer Actions＋`revalidatePath`/`revalidateTag`で個別のcacheをpurgeできるようになりそう
-  - 現状はこれらを利用すると全てのcacheがpurgeされる
-  - ちなみに`cookies.set`/`cookies.delete`でも全てのcacheはpurgeされる
+- 以下の方法で全てのRouter Cacheのpurgeが可能
+  - `router.refresh()`
+  - Server Actions+`revalidatePath`/`revalidateTag`
+  - Server Actions+`cookies.set`/`cookies.delete`
+- 将来的にはServer Actions＋`revalidatePath`/`revalidateTag`は個別のcacheをpurgeできるようになりそう
 
 ---
 layout: sub-section
@@ -197,7 +197,7 @@ layout: sub-section
 breadcrumb: App Routerのいいところ
 ---
 
-# App Routerには夢がある
+# App Routerでよりシンプルになったものもある
 
 - Server Components
   - より直感的なデータ取得とレンダリング
@@ -214,11 +214,17 @@ layout: sub-section
 breadcrumb: App Routerのいいところ
 ---
 
-# Next.jsはApp Routerに全力
+# Pages Routerとの共存は暫定的な可能性
 
-- Pages Routerは若干メンテナンスモード気味
-- 新機能はApp Routerばかり
-- Reactコアチームも連携してApp Routerの開発は進んでるため、頓挫する可能性はかなり低そう
+> We are committed to supporting pages/ development, including bug fixes, improvements, and security patches, for multiple major versions moving forward.
+
+https://nextjs.org/blog/next-13-4#is-the-pages-router-going-away
+
+- 今後複数majorバージョンにおいてPages Routerのサポートは継続される
+- **その後のことは名言しておらず、Pages Routerがdeprecate・廃止される可能性はある**
+- 現状すでにサポートするとはいいつつ、新機能はApp Routerばかり
+  - Pages Routerはバグも放置されがち？
+- 現時点ではApp RouterはNext.jsの将来のメインストリームになる可能性はとても高い
 
 ---
 
@@ -231,8 +237,9 @@ breadcrumb: App RouterとRouter Cacheまとめ
 
 # App RouterとRouter Cache
 
-- App Routerは今後の主軸なのは間違いない
-- Router Cacheは複雑かつまだ不安定気味
-- 悩んだら以下の記事を読むと参考になるかも
+- App RouterはNext.jsの今後の主軸になる可能性はとても高い
+- App Router、特にRouter Cacheは複雑かつまだ不安定気味
+
+より詳しい話はzennにも記事で書いてるのでよければ読んでください。
 
 https://zenn.dev/akfm/
