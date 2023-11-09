@@ -16,6 +16,20 @@ remoteAssets: false
 App Routerのクライアントサイドキャッシュの複雑さ
 
 ---
+
+# About
+
+- name: 佐藤 昭文（Akifumi Sato）
+  - twitter: akfm_sato
+  - github: AkifumiSato
+  - zenn.dev: akfm
+  - Front-end/Backend Engineer
+- Next.js
+  - 仕事でもNext.js（Pages Router）のプロジェクトを担当
+  - 自身のサイトなどもNext.js（App Router）
+  - App Routerに強い興味あり
+
+---
 layout: message
 ---
 
@@ -53,20 +67,23 @@ breadcrumb: Next.js(App Router)
 
 # App Routerのキャッシュ
 
-App Routerにはいくつかのキャッシュ層が存在する
+App Routerには[いくつかのキャッシュ層](https://nextjs.org/docs/app/building-your-application/caching)が存在する
 
-https://github.com/vercel/next.js/blob/05b2730f55371a7fb16b9afff6d01ad7010a897d/docs/02-app/01-building-your-application/04-caching/index.mdx
+
+<div class="flex justify-center">
+  <img src="/assets/cache-layer.png" class="h-80 w-100">
+</div>
 
 ---
 
 ## Overview
 
-| Mechanism                             | What is cached?                | Where is it cached? |  Duration                        |
-| ------------------------------------- | ------------------------------ | ------------------- |  ------------------------------- |
-| React Cache           | Return values of functions     | Server              |  Per-request lifecycle           |
-| Data Cache             | Return values of data requests | Server              |  Persistent (can be revalidated) |
-| Full Route Cache | Rendered HTML and RSC payload  | Server              |  Persistent (can be revalidated) |
-| Router Cache         | Route Segments (RSC Payload)   | Client              |  User session or time-based.     |
+| Mechanism               | What                       | Where  | Purpose                                         | Duration                        |
+|-------------------------|----------------------------|--------|-------------------------------------------------|---------------------------------|
+| Request Memoization     | Return values of functions | Server | Re-use data in a React Component tree           | Per-request lifecycle           |
+| Data Cache](#data-cache | Data                       | Server | Store data across user requests and deployments | Persistent (can be revalidated) |
+| Full Route Cache        | HTML and RSC payload       | Server | Reduce rendering cost and improve performance   | Persistent (can be revalidated) |
+| Router Cache            | RSC Payload                | Client | Reduce server requests on navigation            | User session or time-based      |
 
 ---
 layout: sub-section
@@ -98,8 +115,9 @@ breadcrumb: App Router Navigation
 
 Router Cacheの話題に入る前に、App Routerの遷移を理解する必要がある
 
-- App Routerでは、積極的にprefetchを行い、結果はcacheとして格納される(**Router Cache**)
-- `Cache`と呼ばれてはいるが、内部的には遷移時に必ず必要となる
+- App Routerでは、積極的にprefetchを行い、結果はcacheとして格納される
+  - 内部的には`prefetchCache`と呼ばれているが、公には**Router Cache**と呼ばれている
+  - Router Cacheは遷移時に必ず必要となる
 - 必要なcacheが見つからない場合、即座にfetchを行いRouter Cacheを更新する
 
 ---
@@ -135,16 +153,29 @@ layout: sub-section
 breadcrumb: Router Cacheの複雑な挙動
 ---
 
+# cacheの内部的な分類
+
+| cacheの種類    | `Link`                 | `router`                                             |
+|-------------|------------------------|------------------------------------------------------|
+| `auto`      | `prefetch={undefined}` | `router.prefetch(path, { kind: PrefetchKind.AUTO })` | 
+| `full`      | `prefetch={true}`      | `router.prefetch(path)`                              | 
+| `temporary` | `prefetch={false}`     | -                                                    |
+
+---
+layout: sub-section
+breadcrumb: Router Cacheの複雑な挙動
+---
+
 # cacheのexpireが複雑
 
-Router Cacheのexpireは`prefetch={}`・取得時間・利用時間によって複雑に分岐する
+Router Cacheのexpireは`prefetch`props・取得時間・利用時間によって分岐する
 
-| 時間判定 / cacheの種類               | `auto` | `full` | `temporary` |
-| ----------------------- | ------- | ---- | ---- |
-| prefetch/fetchから**30秒以内**                  | `fresh`    | `fresh` | `fresh` |
-| lastUsedから**30秒以内**     | `reusable` | `reusable` | `reusable` |
-| prefetch/fetchから**30秒~5分**                  | `stale`    | `reusable` | `expired` |
-| prefetch/fetchから**5分以降**                  | `expired`    | `expired` | `expired` |
+| 時間判定 / cacheの種類            | `auto`     | `full`     | `temporary` |
+|----------------------------|------------|------------|-------------|
+| prefetch/fetchから**30秒以内**  | `fresh`    | `fresh`    | `fresh`     |
+| lastUsedから**30秒以内**        | `reusable` | `reusable` | `reusable`  |
+| prefetch/fetchから**30秒~5分** | `stale`    | `reusable` | `expired`   |
+| prefetch/fetchから**5分以降**   | `expired`  | `expired`  | `expired`   |
 
 ---
 layout: sub-section
@@ -155,7 +186,7 @@ breadcrumb: Router Cacheの複雑な挙動
 
 - `fresh`, `reusable`: prefetch/fetchを再発行せず、cacheを再利用する
 - `stale`: Dynamic Rendering部分だけ遷移時に再fetchを行う
-- `expired`: prefetchh/fetchを再発行する
+- `expired`: prefetch/fetchを再発行する
 
 ---
 layout: sub-section
@@ -172,21 +203,23 @@ cacheをpurgeする手段が複雑
   - Server Actions+`cookies.set`/`cookies.delete`
 - 将来的にはServer Actions＋`revalidatePath`/`revalidateTag`は個別のcacheをpurgeできるようになりそう
 
+https://github.com/vercel/next.js/discussions/54075
+
 ---
 layout: sub-section
 breadcrumb: Router Cacheの複雑な挙動
 ---
 
-# cacheがあるときにIntercepting routesがバグってる
+# cacheがあるとIntercepting routesが機能しない
 
 Router CacheとIntercepting routesの組み合わせが設計からして相性が悪い
 
 https://github.com/vercel/next.js/issues/52748
 
 - Intercepting routesは`Next-Url`ヘッダー（GETパラメータなどを省いたもの）に基づいて判定される
-- Router Cacheは現状`Next-Url`の考慮がなされてないため、Intercepting routes時にも意図せずcache hitしてしまう
-- 安易に治すと、遷移ごとにprefetchしないといけなくてこれまでの何倍ものprefetchが行われてしまう
-  - しかし現状、積極的すぎたprefetchは減らす方向にある模様（？）
+- Router Cacheは現状URLパスをkeyにしているため`Next-Url`が考慮されておらず、Intercepting routes時もcache hitしてしまう
+- `Next-Url`をキーに含めるようにすると、これまでの何倍ものprefetchが行われてしまうので難しい問題
+- （それはそうと反応がないのは困る）
 
 ---
 
@@ -243,3 +276,9 @@ breadcrumb: App RouterとRouter Cacheまとめ
 より詳しい話はzennにも記事で書いてるのでよければ読んでください。
 
 https://zenn.dev/akfm/
+
+---
+layout: message
+---
+
+Thanks
