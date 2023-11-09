@@ -78,12 +78,12 @@ App Routerには[いくつかのキャッシュ層](https://nextjs.org/docs/app/
 
 ## Overview
 
-| Mechanism               | What                       | Where  | Purpose                                         | Duration                        |
-|-------------------------|----------------------------|--------|-------------------------------------------------|---------------------------------|
-| Request Memoization     | Return values of functions | Server | Re-use data in a React Component tree           | Per-request lifecycle           |
-| Data Cache](#data-cache | Data                       | Server | Store data across user requests and deployments | Persistent (can be revalidated) |
-| Full Route Cache        | HTML and RSC payload       | Server | Reduce rendering cost and improve performance   | Persistent (can be revalidated) |
-| Router Cache            | RSC Payload                | Client | Reduce server requests on navigation            | User session or time-based      |
+| Mechanism           | What                       | Where  | Purpose                                         | Duration                        |
+|---------------------|----------------------------|--------|-------------------------------------------------|---------------------------------|
+| Request Memoization | Return values of functions | Server | Re-use data in a React Component tree           | Per-request lifecycle           |
+| Data Cache          | Data                       | Server | Store data across user requests and deployments | Persistent (can be revalidated) |
+| Full Route Cache    | HTML and RSC payload       | Server | Reduce rendering cost and improve performance   | Persistent (can be revalidated) |
+| Router Cache        | RSC Payload                | Client | Reduce server requests on navigation            | User session or time-based      |
 
 ---
 layout: sub-section
@@ -212,14 +212,13 @@ breadcrumb: Router Cacheの複雑な挙動
 
 # cacheがあるとIntercepting routesが機能しない
 
-Router CacheとIntercepting routesの組み合わせが設計からして相性が悪い
-
-https://github.com/vercel/next.js/issues/52748
-
-- Intercepting routesは`Next-Url`ヘッダー（GETパラメータなどを省いたもの）に基づいて判定される
-- Router Cacheは現状URLパスをkeyにしているため`Next-Url`が考慮されておらず、Intercepting routes時もcache hitしてしまう
-- `Next-Url`をキーに含めるようにすると、これまでの何倍ものprefetchが行われてしまうので難しい問題
-- （それはそうと反応がないのは困る）
+- intercepting routesとは
+  - https://next-intercepting-routes-demo.vercel.app/
+- Router CacheとIntercepting routesの組み合わせが設計からして相性が悪い
+  - https://github.com/vercel/next.js/issues/52748
+  - Intercepting routesは`Next-Url`ヘッダー（GETパラメータなどを省いたもの）に基づいて判定される
+  - Router Cacheは現状URLパスをkeyにしているため`Next-Url`が考慮されておらず、Intercepting routes時もcache hitしてしまう
+  - `Next-Url`をキーに含めるようにすると、これまでの何倍ものprefetchが行われてしまうので難しい問題
 
 ---
 
