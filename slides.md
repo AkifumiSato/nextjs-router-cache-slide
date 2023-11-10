@@ -23,7 +23,7 @@ App Routerのクライアントサイドキャッシュの複雑さ
   - twitter: akfm_sato
   - github: AkifumiSato
   - zenn.dev: akfm
-  - Front-end/Backend Engineer
+  - Frontend/Backend Engineer
 - Next.js
   - 仕事でもNext.js（Pages Router）のプロジェクトを担当
   - 自身のサイトなどもNext.js（App Router）
@@ -139,10 +139,11 @@ breadcrumb: App Router Navigation
 
 # Navigationのポイント
 
-- 遷移にRouter Cacheは必ず必要で、なければ遷移時にfetchしてcacheに格納する
-- App Routerは積極的に静的化(static rendering)とprefetchを行う
-- prefetchは`Link`コンポーネントの`prefetch`propsで制御でき、`undefined`,`true`,`false`で挙動が異なる
-- Router Cacheは一般的なcache同様、expireされるまで再利用される
+- App Routerはのrenderingにはstatic rendering/dynamic renderingの2つがある
+  - App Routerは積極的に静的化(static rendering)してprefetchを行う
+- 遷移にRouter Cacheは必ず必要
+  - dynamic rendering部分やprefetchが無効なページについては遷移時に取得される
+  - prefetchは`Link`コンポーネントの`prefetch`propsで制御でき、`undefined`,`true`,`false`で挙動が異なる
 
 ---
 
