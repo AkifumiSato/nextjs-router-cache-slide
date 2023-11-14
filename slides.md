@@ -23,7 +23,7 @@ App Routerのクライアントサイドキャッシュの複雑さ
   - twitter: akfm_sato
   - github: AkifumiSato
   - zenn.dev: akfm
-  - Frontend/Backend Engineer
+  - Web Engineer
 - Next.js
   - 仕事でもNext.js（Pages Router）のプロジェクトを担当
   - 自身のサイトなどもNext.js（App Router）
@@ -55,10 +55,9 @@ https://nextjs.org/docs/app
 - Next.jsの新しいRouter
   - 従来のRouterは**Pages Router**と呼称
   - フレームワークとしてはほとんど別物レベル
-- Reactコアチームと協業して開発
-  - Server first
-  - より積極的なキャッシュ戦略
-  - Nesting Layout
+- Server first
+- 積極的なキャッシュ
+- Nesting Layout
 
 ---
 layout: sub-section
@@ -94,13 +93,11 @@ breadcrumb: Next.js(App Router)
 
 App Routerの仕組みを研究してみようと思ったら、Router Cacheが複雑なことに気づいた
 
-- [Next.js App Router 遷移の仕組みと実装
+1. App Routerの遷移の仕組みに詳しくなりたかった
+2. [Next.js App Router 遷移の仕組みと実装
 ](https://zenn.dev/akfm/articles/next-app-router-navigation)
-  - 遷移の仕組みを調べてた
-  - ここでRouter Cacheの複雑さに気づくが複雑すぎて理解を諦める
-- [Next.js App Router 知られざるClient-side Cacheの仕様
+3. [Next.js App Router 知られざるClient-side Cacheの仕様
 ](https://zenn.dev/akfm/articles/next-app-router-client-cache)
-  - 頑張って調べてまとめた
 
 ---
 
@@ -117,7 +114,7 @@ Router Cacheの話題に入る前に、App Routerの遷移を理解する必要�
 
 - App Routerでは、積極的にprefetchを行い、結果はcacheとして格納される
   - 内部的には`prefetchCache`と呼ばれているが、公には**Router Cache**と呼ばれている
-  - Router Cacheは遷移時に必ず必要となる
+  - cacheと呼ばれてるが、遷移時に必ず必要となる
 - 必要なcacheが見つからない場合、即座にfetchを行いRouter Cacheを更新する
 
 ---
@@ -139,11 +136,9 @@ breadcrumb: App Router Navigation
 
 # Navigationのポイント
 
-- App Routerはのrenderingにはstatic rendering/dynamic renderingの2つがある
-  - App Routerは積極的に静的化(static rendering)してprefetchを行う
-- 遷移にRouter Cacheは必ず必要
-  - dynamic rendering部分やprefetchが無効なページについては遷移時に取得される
-  - prefetchは`Link`コンポーネントの`prefetch`propsで制御でき、`undefined`,`true`,`false`で挙動が異なる
+- App Routerはのrenderingにはstatic rendering/dynamic renderingの2つがあり、基本はstatic rendering
+- 積極的にprefetchを行い、static rendering部分は早期にcacheされる
+- dynamic rendering部分やprefetchが無効なページについては遷移時にfetchされる
 
 ---
 
@@ -155,6 +150,8 @@ breadcrumb: Router Cacheの複雑な挙動
 ---
 
 # cacheの内部的な分類
+
+Router Cacheは内部的な分類を持っており、挙動がそれぞれ異なる
 
 | cacheの種類    | `Link`                 | `router`                                             |
 |-------------|------------------------|------------------------------------------------------|
@@ -188,6 +185,18 @@ breadcrumb: Router Cacheの複雑な挙動
 - `fresh`, `reusable`: prefetch/fetchを再発行せず、cacheを再利用する
 - `stale`: Dynamic Rendering部分だけ遷移時に再fetchを行う
 - `expired`: prefetch/fetchを再発行する
+
+---
+layout: sub-section
+breadcrumb: Router Cacheの複雑な挙動
+---
+
+# Cacheのライフサイクルに影響する要素
+
+- static rendering/dynamic rendering
+- `Link`コンポーネントの`prefetch` props
+- 取得からの時間
+- 最後にcacheが利用された時間
 
 ---
 layout: sub-section
