@@ -136,7 +136,7 @@ breadcrumb: App Router Navigation
 
 # Navigationのポイント
 
-- App Routerはのrenderingにはstatic rendering/dynamic renderingの2つがあり、基本はstatic rendering
+- App Routerのrenderingにはstatic rendering/dynamic renderingの2つがあり、基本はstatic rendering
 - 積極的にprefetchを行い、static rendering部分は早期にcacheされる
 - dynamic rendering部分やprefetchが無効なページについては遷移時にfetchされる
 
@@ -244,7 +244,6 @@ breadcrumb: App Routerのいいところ
 - Server Components
   - より直感的なデータ取得とレンダリング
   - 一部ながらも`typeof window`分岐とさよなら
-  - ファイルサイズやrenderingコストが低減される
 - Nested Layout
   - URL仕様次第ではあるが、うまく使えば重複コードを減らせる
   - 遷移時に失われてたstateも保持できる
