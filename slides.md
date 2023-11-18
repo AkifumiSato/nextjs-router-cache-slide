@@ -33,9 +33,9 @@ App Routerのクライアントサイドキャッシュの複雑さ
 layout: message
 ---
 
-今日話したいこと:
+今日話すこと:
 
-Router Cacheは複雑
+Router Cacheの複雑さ
 
 ---
 
