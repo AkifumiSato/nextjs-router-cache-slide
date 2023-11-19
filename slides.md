@@ -124,8 +124,10 @@ breadcrumb: App Router Navigation
 
 # Demo
 
+https://next-router-cache-demo.vercel.app/
+
 <div class="flex justify-center">
-  <img src="/assets/prefetch_demo.png" class="h-100">
+  <img src="/assets/prefetch_demo.png" class="h-85">
 </div>
 
 
